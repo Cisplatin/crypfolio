@@ -14,11 +14,17 @@ if __name__ == '__main__':
         except yaml.YAMLError as exc:
             print exc
 
+    # Get the USD -> CAD conversion rate
+    exchange_rate = requests.get(FIXER_CAD_URL).json()['rates']['CAD']
+
     # Get the data from coinmarketcap
     data = [FORMAT]
     total = 0
     for crypto in portfolio:
-        info = requests.get(API_ROOT + crypto).json()[0]
+        try:
+            info = requests.get(API_ROOT + crypto).json()[0]
+        except KeyError:
+            "Cryptocurrency '%s' not found." % crypto
 
         # Update the total
         total += portfolio[crypto] * float(info['price_usd'])
@@ -37,7 +43,4 @@ if __name__ == '__main__':
     for row in data:
         print(fmt.format(*row))
     print 'Total USD: %s' % "${:.2f}".format(total)
-
-    # Get the USD -> CAD conversion rate
-    exchange_rate = requests.get(FIXER_CAD_URL).json()['rates']['CAD']
     print 'Total CAD: %s' % "${:.2f}".format(total * exchange_rate)

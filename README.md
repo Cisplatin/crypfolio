@@ -11,10 +11,9 @@ First, inside of the crypfolio directy, run:
 Next, create a file called `portfolio.yaml` in the crypfolio directory, and formatted as such:
 
 ```
-bitcoin: 12
-monero: 100
-...
-<cryptocurrency_name>: <amount>
+bitcoin: 0.50223008
+augur: 129.89723048
+monero: 189.27788475
 ```
 
 Then, to get budget information, use:
