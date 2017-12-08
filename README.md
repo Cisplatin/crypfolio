@@ -1,13 +1,22 @@
 # crypfolio
 
-A portfolio manager for your cryptos.
+A portfolio manager for your cryptocurrencies.
 
-## Development
+## Use
 
-To download and install dependencies:
+First, inside of the crypfolio directy, run:
+
+`pip install -r requirements.txt`
+
+Next, create a file called `portfolio.yaml` in the crypfolio directory, and formatted as such:
 
 ```
-git clone https://github.com/Cisplatin/crypfolio
-cd crypfolio
-pip install -r requirements.txt
+bitcoin: 12
+monero: 100
+...
+<cryptocurrency_name>: <amount>
 ```
+
+Then, to get budget information, use:
+
+`python crypfolio.py`
