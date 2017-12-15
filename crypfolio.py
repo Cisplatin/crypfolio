@@ -44,6 +44,9 @@ if __name__ == '__main__':
 
         data += [map(lambda x: str(info[x]), FORMAT)]
 
+    if fiat:
+        data += [map(str, ['Fiat', fiat, exchange_rate, "${:.2f}".format(fiat / exchange_rate), 'N/A'])]
+
     usd_total = total
     cad_total = total * exchange_rate
     total = total * exchange_rate + fiat
