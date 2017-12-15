@@ -16,6 +16,8 @@ augur: 129.89723048
 monero: 189.27788475
 ```
 
+There's also the special word 'fiat', which can be used to include fiat total (CAD) in the total.
+
 Then, to get budget information, use:
 
 `python crypfolio.py`

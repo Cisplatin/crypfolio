@@ -20,6 +20,13 @@ if __name__ == '__main__':
     # Get the data from coinmarketcap
     data = [FORMAT]
     total = 0
+
+    # Check if fiat was supplied
+    fiat = False
+    if 'fiat' in portfolio:
+        fiat = portfolio['fiat']
+        del portfolio['fiat']
+
     for crypto in portfolio:
         try:
             info = requests.get(API_ROOT + crypto).json()[0]
@@ -37,10 +44,15 @@ if __name__ == '__main__':
 
         data += [map(lambda x: str(info[x]), FORMAT)]
 
+    usd_total = total
+    cad_total = total * exchange_rate
+    total = total * exchange_rate + fiat
+
     # Print the data cleanly
     widths = [max([len(item) for item in col]) for col in zip(*data)]
     fmt = ''.join(['{{:{}}}'.format(width + 4) for width in widths])
     for row in data:
         print(fmt.format(*row))
-    print 'Total USD: %s' % "${:.2f}".format(total)
-    print 'Total CAD: %s' % "${:.2f}".format(total * exchange_rate)
+    print 'Total USD: %s' % "${:.2f}".format(usd_total)
+    print 'Total CAD: %s' % "${:.2f}".format(cad_total)
+    print 'Total CAD (with  fiat): %s' % "${:.2f}".format(total)
