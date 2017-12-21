@@ -1,9 +1,10 @@
-import yaml
+import datetime
 import requests
+import yaml
 
 FILENAME = 'portfolio.yaml'
 API_ROOT = 'https://api.coinmarketcap.com/v1/ticker/'
-FIXER_CAD_URL = 'https://api.fixer.io/latest?base=USD'
+FIXER_CAD_URL = 'https://api.fixer.io/{}?base=USD'
 FORMAT = ['symbol', 'amount', 'price_usd', 'total_usd', 'percent_change_24h', 'percent_allocation']
 
 if __name__ == '__main__':
@@ -15,7 +16,9 @@ if __name__ == '__main__':
             print exc
 
     # Get the USD -> CAD conversion rate
-    exchange_rate = requests.get(FIXER_CAD_URL).json()['rates']['CAD']
+    yesterday = (datetime.date.today() - datetime.timedelta(1))
+    yesterday_rate = requests.get(FIXER_CAD_URL.format(yesterday)).json()['rates']['CAD']
+    exchange_rate = requests.get(FIXER_CAD_URL.format('latest')).json()['rates']['CAD']
 
     # Get the data from coinmarketcap
     data = [FORMAT]
@@ -47,7 +50,8 @@ if __name__ == '__main__':
 
     if fiat:
         total_fiat = "${:.2f}".format(fiat / exchange_rate)
-        data += [map(str, ['Fiat', fiat, exchange_rate, total_fiat, 'N/A', 0])]
+        change = "{:.2f}%".format(1 - (yesterday_rate / float(exchange_rate)))
+        data += [map(str, ['Fiat', fiat, exchange_rate, total_fiat, change, 0])]
 
     # Calculate percent allocation for real
     for i in xrange(1, len(data)):
