@@ -4,7 +4,7 @@ import requests
 FILENAME = 'portfolio.yaml'
 API_ROOT = 'https://api.coinmarketcap.com/v1/ticker/'
 FIXER_CAD_URL = 'https://api.fixer.io/latest?base=USD'
-FORMAT = ['symbol', 'amount', 'price_usd', 'total_usd', 'percent_change_24h']
+FORMAT = ['symbol', 'amount', 'price_usd', 'total_usd', 'percent_change_24h', 'percent_allocation']
 
 if __name__ == '__main__':
     # Open the portfolio yaml file
@@ -41,12 +41,19 @@ if __name__ == '__main__':
         info['total_usd'] = info['amount'] * float(info['price_usd'])
         info['total_usd'] = "${:.2f}".format(info['total_usd'])
         info['percent_change_24h'] += '%'
+        info['percent_allocation'] = 0 # Can't calculate yet
 
         data += [map(lambda x: str(info[x]), FORMAT)]
 
     if fiat:
-        data += [map(str, ['Fiat', fiat, exchange_rate, "${:.2f}".format(fiat / exchange_rate), 'N/A'])]
+        total_fiat = "${:.2f}".format(fiat / exchange_rate)
+        data += [map(str, ['Fiat', fiat, exchange_rate, total_fiat, 'N/A', 0])]
 
+    # Calculate percent allocation for real
+    for i in xrange(1, len(data)):
+        data[i][-1] = "{:.2f}%".format(100 * float(data[i][3][1:]) / total)
+
+    # Calculate totals
     usd_total = total
     cad_total = total * exchange_rate
     total = total * exchange_rate + fiat
